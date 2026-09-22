@@ -77,7 +77,7 @@ public class DictionaryTest : MonoBehaviour
 
     }
 
-    static int dictionaryLookupTest()
+    static long dictionaryLookupTest()
     {
         Dictionary<int, int> dict = new Dictionary<int, int>(1024);
         int[] array = new int[1024];
@@ -106,28 +106,29 @@ public class DictionaryTest : MonoBehaviour
         double timer1 = 0.0d;
         double timer2 = 0.0d;
 
-        int value = 0;
+        long checksum = 0;
         int numIterations = 100000;
         for (int i = 0; i < numIterations; i++)
         {
             time = Time.realtimeSinceStartupAsDouble;
             for (int j = 0; j < 1024; j++)
             {
-                value = dict[randomIndices[j]];
+                checksum += dict[randomIndices[j]];
             }
             timer1 += (Time.realtimeSinceStartupAsDouble - time);
 
             time = Time.realtimeSinceStartupAsDouble;
             for (int j = 0; j < 1024; j++)
             {
-                value = array[randomIndices[j]];
+                checksum += array[randomIndices[j]];
             }
             timer2 += (Time.realtimeSinceStartupAsDouble - time);
 
         }
         Debug.Log("Dictionary " + timer1.ToString("N4"));
         Debug.Log("Array " + timer2.ToString("N4"));
-        return value;
+        Debug.Log("Checksum " + checksum);
+        return checksum;
     }
 
     public void RunDictAccessTest()
@@ -150,7 +151,7 @@ public class DictionaryTest : MonoBehaviour
         double[] classTimer = new double[SIZE];
         double[] structTimer = new double[SIZE];
 
-        int value = 0;
+        long checksum = 0;
 
         for (int i = 0; i < m_numIterations; i++)
         {
@@ -158,14 +159,14 @@ public class DictionaryTest : MonoBehaviour
             time = Time.realtimeSinceStartupAsDouble;
             for (int j = 0; j < 1024; j++)
             {
-                value = dict2[randomIndices[j]];
+                checksum += dict2[randomIndices[j]];
             }
             timer1 += (Time.realtimeSinceStartupAsDouble - time);
 
             time = Time.realtimeSinceStartupAsDouble;
             for (int j = 0; j < 1024; j++)
             {
-                value = array2[randomIndices[j]];
+                checksum += array2[randomIndices[j]];
             }
             timer2 += (Time.realtimeSinceStartupAsDouble - time);
 
@@ -188,21 +189,21 @@ public class DictionaryTest : MonoBehaviour
             time = Time.realtimeSinceStartupAsDouble;
             foreach (var item in dict1)
             {
-                value += item.Value;
+                checksum += item.Value;
             }
             timer5 += (Time.realtimeSinceStartupAsDouble - time);
 
             time = Time.realtimeSinceStartupAsDouble;
             for (int j = 0; j < 1024; j++)
-                value += array1[j];
+                checksum += array1[j];
             timer6 += (Time.realtimeSinceStartupAsDouble - time);
 
             for (int k = 0; k < SIZE; k++)
             {
-                arrayIteration(ref arrayTimer[k], k, ref value);
-                dictLookup(ref dictTimer[k], k, ref value);
-                dictSructLookup(ref structTimer[k], k, ref value);
-                dictClassLookup(ref classTimer[k], k, ref value);
+                arrayIteration(ref arrayTimer[k], k, ref checksum);
+                dictLookup(ref dictTimer[k], k, ref checksum);
+                dictSructLookup(ref structTimer[k], k, ref checksum);
+                dictClassLookup(ref classTimer[k], k, ref checksum);
             }
         }
 
@@ -217,6 +218,8 @@ public class DictionaryTest : MonoBehaviour
         ResultText.text += "Dictionary iteration " + timer5.ToString("N4") + "\n";
         ResultText.text += "Array iteration " + timer6.ToString("N4") + "\n";
         ResultText.text += "Array  " + (timer5/timer6).ToString("N4") + "x faster\n";
+        ResultText.text += "\n";
+        ResultText.text += "Checksum " + checksum + "\n";
         ResultText.text += "\n";
 
         for (int k = SIZE - 1; k >= 0; k--)
@@ -250,38 +253,38 @@ public class DictionaryTest : MonoBehaviour
         }
     }
 
-    private void arrayIteration(ref double timer, int element, ref int value)
+    private void arrayIteration(ref double timer, int element, ref long checksum)
     {
         double time = Time.realtimeSinceStartupAsDouble;
         for (int j = 0; j < 1024; j++)
             if (array1[j] == element)
             {
-                value += array2[j];
+                checksum += array2[j];
                 break;
             }
         timer += (Time.realtimeSinceStartupAsDouble - time);
     }
 
-    private void dictLookup(ref double timer, int element, ref int value)
+    private void dictLookup(ref double timer, int element, ref long checksum)
     {
         double time = Time.realtimeSinceStartupAsDouble;
-        value += dict2[element];
+        checksum += dict2[element];
         timer += (Time.realtimeSinceStartupAsDouble - time);
 
     }
 
-    private void dictSructLookup(ref double timer, int element, ref int value)
+    private void dictSructLookup(ref double timer, int element, ref long checksum)
     {
         double time = Time.realtimeSinceStartupAsDouble;
-        value += structDict[element].I;
+        checksum += structDict[element].I;
         timer += (Time.realtimeSinceStartupAsDouble - time);
 
     }
 
-    private void dictClassLookup(ref double timer, int element, ref int value)
+    private void dictClassLookup(ref double timer, int element, ref long checksum)
     {
         double time = Time.realtimeSinceStartupAsDouble;
-        value += classDict[element].I;
+        checksum += classDict[element].I;
         timer += (Time.realtimeSinceStartupAsDouble - time);
     }
 }
