@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Chapter-9-Dictionary-Performance.sln"
+    "dotnet.defaultSolution": "Chapter-9-Dictionary-Performance.slnx"
 }
